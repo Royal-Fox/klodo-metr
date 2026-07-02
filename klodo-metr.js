@@ -97,7 +97,11 @@ body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 -apple-system,S
 h1{font-size:22px;margin:0 0 2px;letter-spacing:-.3px}
 .sub{color:var(--mut);font-size:13px;margin-bottom:22px}
 .foot{color:var(--mut);font-size:12px;text-align:center;margin-top:36px;border-top:1px solid var(--bd);padding-top:18px}
-.viewtabs{display:flex;gap:10px;margin-bottom:22px}
+.viewtabs{display:flex;gap:10px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+.brandlogo{display:flex;align-items:center;gap:8px}
+.bl-word{font-weight:700;color:#fff;font-size:18px;line-height:1}
+.bl-pill{font-size:11px;color:#60a5fa;background:rgba(59,130,246,0.10);padding:3px 8px;border-radius:999px;line-height:1;font-weight:500}
 .viewtabs button{flex:none;background:var(--card);border:1px solid var(--bd);color:var(--mut);padding:11px 20px;border-radius:12px;font-size:15px;cursor:pointer;font-weight:600}
 .viewtabs button.on{background:linear-gradient(135deg,#3b82f6,#60a5fa);color:#0b0e14;border-color:transparent}
 .bar{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:18px}
@@ -183,8 +187,10 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--card2)}
 <body>
 <canvas id="confetti"></canvas>
 <div class="wrap">
-  <h1>Claude Code - kolik jsi spálil 🍆</h1>
-  <div class="viewtabs"><button id="tabFlex" class="on">🍆 Souboj klódů</button><button id="tabDash">📊 Přehled</button></div>
+  <div class="topbar">
+    <div class="viewtabs"><button id="tabFlex" class="on">🍆 Souboj klódů</button><button id="tabDash">📊 Přehled</button></div>
+    <div class="brandlogo"><span class="bl-word">Vibecoding</span><span class="bl-pill">Akademie</span></div>
+  </div>
 
   <div id="viewDash" style="display:none">
     <div class="bar">

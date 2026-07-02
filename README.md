@@ -4,6 +4,8 @@
 
 ## Spuštění
 
+> **Používáš Claude Code?** Vlož prompt z **[PROMPT.md](PROMPT.md)** - Claude jen stáhne a spustí hotový skript (nic neprogramuje, takže je to levné na tokeny).
+
 Jeden příkaz (macOS / Linux / Windows s `curl`):
 
 ```bash
