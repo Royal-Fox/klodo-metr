@@ -7,7 +7,7 @@
 Vezmi tenhle mini prompt a vlož ho do Claude Code (nebo jiné AI s přístupem k terminálu). Vše se udělá samo - stáhne se skript, vytáhnou se tvoje data a otevře se prohlížeč s výsledkem:
 
 ```
-Stáhni a řiď se přesně instrukcemi z https://raw.githubusercontent.com/Royal-Fox/klodo-metr/main/PROMPT.md
+Stáhni a řiď se přesně instrukcemi z https://raw.githubusercontent.com/vibecoding-akademie/klodo-metr/main/PROMPT.md
 ```
 
 Levné na tokeny - AI nic neprogramuje, jen stáhne a spustí hotový skript.
@@ -17,7 +17,7 @@ Levné na tokeny - AI nic neprogramuje, jen stáhne a spustí hotový skript.
 Jeden příkaz (macOS / Linux / Windows s `curl`):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Royal-Fox/klodo-metr/main/klodo-metr.js -o klodo-metr.js && node klodo-metr.js
+curl -fsSL https://raw.githubusercontent.com/vibecoding-akademie/klodo-metr/main/klodo-metr.js -o klodo-metr.js && node klodo-metr.js
 ```
 
 Nebo si stáhni `klodo-metr.js` a spusť:
