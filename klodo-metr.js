@@ -84,7 +84,11 @@ return `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Claude Code - Souboj klódů</title>
+<title>Klódo-Metr - Kdo má většího klóda?</title>
+<meta name="description" content="Klódo-Metr - změř si, kolik jsi spálil v Claude Code. Vibecoding Akademie.">
+<meta property="og:title" content="🍆 Klódo-Metr - Kdo má většího klóda?">
+<meta property="og:description" content="Změř si, kolik jsi spálil v Claude Code. Běží lokálně. Vibecoding Akademie.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍆</text></svg>">
 <style>
 :root{--bg:#0b0e14;--card:#141a24;--card2:#1a212d;--bd:rgba(255,255,255,.08);--tx:#e6eaf2;--mut:#8b93a7;--accent:#60a5fa}
 *{box-sizing:border-box}
@@ -162,6 +166,8 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--card2)}
 .conv .chip b{color:var(--accent)}
 .flexbtn{background:linear-gradient(135deg,#3b82f6,#60a5fa);border:none;color:#0b0e14;font-weight:700;padding:12px 20px;border-radius:12px;font-size:14px;cursor:pointer}
 .flexbtn:active{transform:translateY(1px)}
+.flexbtn.ok{background:linear-gradient(135deg,#22c55e,#34d399)}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999}
 .flexrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .podium{display:flex;flex-direction:column;gap:8px}
 .prow{display:flex;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--bd);border-radius:10px;padding:10px 14px}
@@ -175,6 +181,7 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--card2)}
 </style>
 </head>
 <body>
+<canvas id="confetti"></canvas>
 <div class="wrap">
   <h1>Claude Code - kolik jsi spálil 🍆</h1>
   <div class="viewtabs"><button id="tabFlex" class="on">🍆 Souboj klódů</button><button id="tabDash">📊 Přehled</button></div>
@@ -249,6 +256,8 @@ const st={from:months[0],to:months[months.length-1],proj:"",model:"",group:"p",s
 function fmtTok(n){n=+n;return n>=1e9?(n/1e9).toFixed(2)+"B":n>=1e6?(n/1e6).toFixed(1)+"M":n>=1e3?(n/1e3).toFixed(1)+"k":""+n;}
 function fmtCost(n){return "$"+(+n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtInt(n){return (+n).toLocaleString("cs-CZ");}
+function animateNumber(el,to,fmt,dur){if(!el)return;dur=dur||850;const start=performance.now();function step(now){let p=Math.min(1,(now-start)/dur);p=1-Math.pow(1-p,3);el.textContent=fmt(to*p);if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
+function fireConfetti(){const cv=document.getElementById("confetti");if(!cv)return;const dpr=Math.min(2,window.devicePixelRatio||1);cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;const g=cv.getContext("2d");g.scale(dpr,dpr);const cols=["#60a5fa","#a78bfa","#34d399","#FFD700","#f472b6"];const parts=[];for(let i=0;i<150;i++){parts.push({x:innerWidth/2+(Math.random()-.5)*180,y:innerHeight*0.30,vx:(Math.random()-.5)*11,vy:Math.random()*-10-4,gr:0.30+Math.random()*0.12,s:5+Math.random()*7,rot:Math.random()*6.28,vr:(Math.random()-.5)*.45,c:cols[i%cols.length],life:1});}let t0=performance.now();function frame(now){const dt=Math.min(34,now-t0);t0=now;const k=dt/16;g.clearRect(0,0,innerWidth,innerHeight);let alive=false;for(const p of parts){p.vy+=p.gr*k;p.x+=p.vx*k;p.y+=p.vy*k;p.rot+=p.vr*k;p.life-=0.007*k;if(p.life>0&&p.y<innerHeight+30){alive=true;g.save();g.globalAlpha=Math.max(0,p.life);g.translate(p.x,p.y);g.rotate(p.rot);g.fillStyle=p.c;g.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.62);g.restore();}}if(alive)requestAnimationFrame(frame);else g.clearRect(0,0,innerWidth,innerHeight);}requestAnimationFrame(frame);}
 
 function filtered(){return DATA.filter(r=>{const mo=r.d.slice(0,7);if(mo<st.from||mo>st.to)return false;if(st.proj&&r.p!==st.proj)return false;if(st.model&&r.m!==st.model)return false;return true;});}
 function initControls(){
@@ -324,7 +333,7 @@ function drawLogo(g,cx,cy){
   x+=w1+gap;roundRect(g,x,cy-pillH/2,pillW,pillH,pillH/2);g.fillStyle="rgba(59,130,246,0.16)";g.fill();
   g.fillStyle="#60a5fa";g.font="500 22px sans-serif";g.fillText(pill,x+padX,cy+1);
 }
-function drawShareCard(s,t,cm){
+function drawShareCard(s,t,cm,opts){
   const cnv=document.getElementById("card");if(!cnv)return;
   const W=1080,H=1080;cnv.width=W;cnv.height=H;const g=cnv.getContext("2d");
   g.fillStyle="#0a0a0f";g.fillRect(0,0,W,H);
@@ -337,8 +346,9 @@ function drawShareCard(s,t,cm){
   const ng=g.createLinearGradient(W*0.28,0,W*0.72,0);ng.addColorStop(0,"#a78bfa");ng.addColorStop(0.6,"#60a5fa");ng.addColorStop(1,"#34d399");
   g.fillStyle=ng;g.font="800 148px sans-serif";g.fillText(cm.toFixed(1)+" cm",W/2,450);
   g.fillStyle="#ffffff";g.font="700 56px sans-serif";g.fillText(t.cur.emoji+"  "+t.cur.name,W/2,610);
-  g.fillStyle="#8b93a7";g.font="italic 27px sans-serif";g.fillText("„"+t.cur.tag+"“",W/2,675);
-  g.fillStyle="#e6eaf2";g.font="500 31px sans-serif";g.fillText(fmtTok(s.tok)+" tokenů   ·   "+s.sessCount+" soubojů   ·   "+s.days+" dní",W/2,790);
+  g.fillStyle="#8b93a7";g.font="italic 27px sans-serif";g.fillText("„"+t.cur.tag+"“",W/2,672);
+  if(opts){g.fillStyle="#60a5fa";g.font="700 22px sans-serif";g.fillText("LEVEL "+opts.level+"/"+opts.levels+"      🏅 "+opts.achGot+"/"+opts.achTotal+" odznaků",W/2,728);}
+  g.fillStyle="#e6eaf2";g.font="500 31px sans-serif";g.fillText(fmtTok(s.tok)+" tokenů   ·   "+s.sessCount+" soubojů   ·   "+s.days+" dní",W/2,792);
   g.strokeStyle="rgba(255,255,255,0.10)";g.lineWidth=2;g.beginPath();g.moveTo(180,880);g.lineTo(W-180,880);g.stroke();
   g.fillStyle="#ffffff";g.font="700 34px sans-serif";g.fillText("Kdo má většího klóda?",W/2,945);
   g.fillStyle="#60a5fa";g.font="600 30px sans-serif";g.fillText("vibecoding-akademie.cz",W/2,995);
@@ -349,11 +359,12 @@ function flexStats(){
     if(r.m==="claude-opus-4-8"||r.m==="claude-opus-4-7")opus+=r.t;
     sess[r.s]=(sess[r.s]||0)+r.t;prj[r.p]=(prj[r.p]||0)+r.t;if(r.d)days.add(r.d);}
   const biggest=Math.max(0,...Object.values(sess));
-  return{cost,tok,cache,opus,sessCount:Object.keys(sess).length,projCount:Object.keys(prj).length,days:days.size,models:mods.size,biggest,projTok:prj,usedFable:mods.has("claude-fable-5"),opusShare:tok?opus/tok:0,cacheShare:tok?cache/tok:0};
+  const months=new Set([...days].map(x=>x.slice(0,7)));
+  return{cost,tok,cache,opus,sessCount:Object.keys(sess).length,projCount:Object.keys(prj).length,days:days.size,months:months.size,models:mods.size,biggest,projTok:prj,usedFable:mods.has("claude-fable-5"),opusShare:tok?opus/tok:0,cacheShare:tok?cache/tok:0};
 }
 function renderFlex(){
   const s=flexStats();const cm=(s.tok/1e8);const t=tierFor(s.tok);
-  document.getElementById("hBig").textContent=cm.toFixed(1)+" cm";
+  animateNumber(document.getElementById("hBig"),cm,v=>v.toFixed(1)+" cm");
   document.getElementById("hEmoji").textContent=t.cur.emoji;
   document.getElementById("hRank").textContent=t.cur.name;
   document.getElementById("hTag").textContent=t.cur.tag;
@@ -364,12 +375,12 @@ function renderFlex(){
     document.getElementById("mToNext").textContent="Do dalšího levelu ti chybí "+fmtTok(t.next.min-s.tok)+" tokenů ("+((t.next.min-s.tok)/1e8).toFixed(1)+" cm).";
   }else{document.getElementById("mNext").textContent="MAX 👑";setTimeout(()=>{document.getElementById("mFill").style.width="100%";},60);
     document.getElementById("mToNext").textContent="Jsi na vrcholu potravního řetězce. Gratulace, ty monstrum.";}
-  document.getElementById("sTok").textContent=fmtTok(s.tok);
-  document.getElementById("sCost").textContent=fmtCost(s.cost);
-  document.getElementById("sSess").textContent=s.sessCount;
-  document.getElementById("sDays").textContent=s.days;
-  document.getElementById("sBig").textContent=fmtTok(s.biggest);
-  document.getElementById("sOpus").textContent=Math.round(s.opusShare*100)+"%";
+  animateNumber(document.getElementById("sTok"),s.tok,fmtTok);
+  animateNumber(document.getElementById("sCost"),s.cost,fmtCost);
+  animateNumber(document.getElementById("sSess"),s.sessCount,v=>Math.round(v));
+  animateNumber(document.getElementById("sDays"),s.days,v=>Math.round(v));
+  animateNumber(document.getElementById("sBig"),s.biggest,fmtTok);
+  animateNumber(document.getElementById("sOpus"),s.opusShare*100,v=>Math.round(v)+"%");
 
   document.getElementById("ladder").innerHTML=TIERS.map((T,i)=>{
     const cls=i===t.idx?"cur":(i<t.idx?"done":"todo");
@@ -395,8 +406,12 @@ function renderFlex(){
     {got:s.cost>=1000,e:"💸",n:"Rozhazovač",d:"Přes $1000"},
     {got:s.models>=4,e:"🍱",n:"Všežravec",d:"4+ modelů"},
     {got:s.days>=30,e:"📅",n:"Vytrvalec",d:"30+ aktivních dní"},
-    {got:s.usedFable,e:"🎩",n:"Fable flirt",d:"Ochutnal jsi Fable"}
+    {got:s.usedFable,e:"🎩",n:"Fable flirt",d:"Ochutnal jsi Fable"},
+    {got:s.tok>=5e9,e:"🐉",n:"Nenasyta",d:"Přes 5B tokenů"},
+    {got:s.tok>=10e9,e:"📏",n:"Stovkař",d:"Přes 100 cm délky"},
+    {got:s.months>=2,e:"💙",n:"Věrný",d:"Aktivní 2+ měsíce"}
   ];
+  const achGot=A.filter(a=>a.got).length,achTotal=A.length;
   document.getElementById("ach").innerHTML=A.map(a=>\`<div class="badge \${a.got?"":"locked"}"><span class="be">\${a.e}</span><div><div class="bn">\${a.n}</div><div class="bd">\${a.d}</div></div></div>\`).join("");
 
   const top=Object.entries(s.projTok).sort((a,b)=>b[1]-a[1]).slice(0,5);const maxp=top.length?top[0][1]:1;const medals=["🥇","🥈","🥉","4.","5."];
@@ -406,8 +421,10 @@ function renderFlex(){
   document.getElementById("flexPreview").textContent=flexText;
   document.getElementById("copyFlex").onclick=async()=>{try{await navigator.clipboard.writeText(flexText);document.getElementById("copyMsg").textContent="Zkopírováno! Šup s tím do chatu 🚀";}catch(e){document.getElementById("copyMsg").textContent="Nešlo zkopírovat - vyber text ručně dole.";}setTimeout(()=>document.getElementById("copyMsg").textContent="",4000);};
 
-  drawShareCard(s,t,cm);
-  document.getElementById("copyCard").onclick=()=>{document.getElementById("card").toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({"image/png":b})]);document.getElementById("cardMsg").textContent="Obrázek zkopírován do schránky - můžeš ho vložit kamkoliv do komentářů v naší komunitě Vibecoding Akademie 🚀";}catch(e){const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="klodo-metr.png";a.click();URL.revokeObjectURL(u);document.getElementById("cardMsg").textContent="Schránka nejde, stáhl jsem obrázek - přilož ho do komentářů v naší komunitě Vibecoding Akademie.";}},"image/png");setTimeout(()=>document.getElementById("cardMsg").textContent="",8000);};
+  drawShareCard(s,t,cm,{level:t.idx+1,levels:TIERS.length,achGot,achTotal});
+  const cbtn=document.getElementById("copyCard"),cmsg=document.getElementById("cardMsg");
+  cbtn.onclick=()=>{document.getElementById("card").toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({"image/png":b})]);cbtn.textContent="✓ Zkopírováno do schránky!";cbtn.classList.add("ok");fireConfetti();cmsg.textContent="Obrázek zkopírován do schránky - můžeš ho vložit kamkoliv do komentářů v naší komunitě Vibecoding Akademie 🚀";setTimeout(()=>{cbtn.textContent="📸 Sdílet jako fotku (kartičku)";cbtn.classList.remove("ok");},2600);}catch(e){const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="klodo-metr.png";a.click();URL.revokeObjectURL(u);cmsg.textContent="Schránka nejde, stáhl jsem obrázek - přilož ho do komentářů v naší komunitě Vibecoding Akademie.";}},"image/png");setTimeout(()=>{cmsg.textContent="";},8000);};
+  if(!window.__flexSeen){window.__flexSeen=true;setTimeout(fireConfetti,300);}
 }
 function showView(v){const dash=v==="dash";document.getElementById("viewDash").style.display=dash?"":"none";document.getElementById("viewFlex").style.display=dash?"none":"";document.getElementById("tabDash").classList.toggle("on",dash);document.getElementById("tabFlex").classList.toggle("on",!dash);if(!dash)renderFlex();}
 document.getElementById("tabDash").onclick=()=>showView("dash");
