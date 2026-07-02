@@ -2,9 +2,17 @@
 
 **Kdo má většího klóda?** Interaktivní přehled tvojí spotřeby v Claude Code + soutěžní "Souboj klódů". Vygeneruje se lokálně z tvých transcriptů - **nic neopustí tvůj počítač**.
 
-## Spuštění
+## 🚀 Nejrychlejší start (zkopíruj do AI a je hotovo)
 
-> **Používáš Claude Code?** Vlož prompt z **[PROMPT.md](PROMPT.md)** - Claude jen stáhne a spustí hotový skript (nic neprogramuje, takže je to levné na tokeny).
+Vezmi tenhle mini prompt a vlož ho do Claude Code (nebo jiné AI s přístupem k terminálu). Vše se udělá samo - stáhne se skript, vytáhnou se tvoje data a otevře se prohlížeč s výsledkem:
+
+```
+Stáhni a řiď se přesně instrukcemi z https://raw.githubusercontent.com/Royal-Fox/klodo-metr/main/PROMPT.md
+```
+
+Levné na tokeny - AI nic neprogramuje, jen stáhne a spustí hotový skript.
+
+## Spuštění (ručně)
 
 Jeden příkaz (macOS / Linux / Windows s `curl`):
 
