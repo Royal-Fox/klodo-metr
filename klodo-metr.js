@@ -415,7 +415,10 @@ function renderFlex(){
     {got:s.usedFable,e:"🎩",n:"Fable flirt",d:"Ochutnal jsi Fable"},
     {got:s.tok>=5e9,e:"🐉",n:"Nenasyta",d:"Přes 5B tokenů"},
     {got:s.tok>=10e9,e:"📏",n:"Stovkař",d:"Přes 100 cm délky"},
-    {got:s.months>=2,e:"💙",n:"Věrný",d:"Aktivní 2+ měsíce"}
+    {got:s.months>=2,e:"💙",n:"Věrný",d:"Aktivní 2+ měsíce"},
+    {got:s.tok>=15e9,e:"🌌",n:"Božstvo",d:"Nejvyšší level (15B+)"},
+    {got:s.tok>=20e9,e:"🐋",n:"Velryba",d:"Přes 20B tokenů"},
+    {got:s.days>=60,e:"🔱",n:"Nesmrtelný",d:"60+ aktivních dní"}
   ];
   const achGot=A.filter(a=>a.got).length,achTotal=A.length;
   document.getElementById("ach").innerHTML=A.map(a=>\`<div class="badge \${a.got?"":"locked"}"><span class="be">\${a.e}</span><div><div class="bn">\${a.n}</div><div class="bd">\${a.d}</div></div></div>\`).join("");
