@@ -27,6 +27,8 @@ Potřebuješ jen **Node.js** (máš ho, když používáš Claude Code) a připo
 - Sdílecí kartička **neobsahuje názvy projektů** (kvůli ochraně jmen klientů).
 - Cena je **ekvivalent API cen**, ne reálná platba na předplatném.
 
+Podrobnosti v [SECURITY.md](SECURITY.md).
+
 ## Dvě záložky
 
 - **🍆 Souboj klódů** - "Klódo-Metr" (délka = tokeny ÷ 100M), ranky, achievementy, žebříček projektů a tlačítko **Sdílet jako fotku (kartičku)**, které zkopíruje brandovanou kartičku do schránky. Hoď ji do komentářů v komunitě Vibecoding Akademie.
