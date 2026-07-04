@@ -246,6 +246,10 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--card2)}
       <div class="flexrow"><button class="flexbtn" id="copyFlex">📋 Zkopírovat flex do schránky</button><span class="muted" id="copyMsg"></span></div>
       <div class="note" id="flexPreview" style="margin-top:12px"></div>
     </div>
+    <div class="panel"><h2>♾️ Historie chatů navždy <span>(ať ti Claude Code nemaže přepisy)</span></h2>
+      <div class="flexrow"><button class="flexbtn" id="copyKeepPrompt" title="Zkopíruje ti prompt - vlož ho do Claude Code a máš historii navždy">♾️ Nastavit neomezenou historii</button><span class="muted" id="keepMsg"></span></div>
+      <div class="note" style="margin-top:12px">Zkopíruje ti prompt - vlož ho do Claude Code a máš historii navždy.</div>
+    </div>
     <div class="disclaimer">* Délka klóda je 100% vědecky nepodložená hodnota (tokeny ÷ 100M). Slouží výhradně k mezikancelářskému měření klódů.</div>
   </div>
   <div class="foot">Zdroj: lokální transcripty (~/.claude/projects) přes ccusage. Cena = API ekvivalent, ne reálná platba na předplatném. Generováno ${generatedAt}.</div>
@@ -429,6 +433,10 @@ function renderFlex(){
   const flexText="🍆 Můj Klódo-Metr: "+cm.toFixed(1)+" cm | "+fmtTok(s.tok)+" tokenů | rank: "+t.cur.name+" "+t.cur.emoji+" | "+fmtCost(s.cost)+" spáleno v Claude Code. Kdo víc? 😏";
   document.getElementById("flexPreview").textContent=flexText;
   document.getElementById("copyFlex").onclick=async()=>{try{await navigator.clipboard.writeText(flexText);document.getElementById("copyMsg").textContent="Zkopírováno! Šup s tím do chatu 🚀";}catch(e){document.getElementById("copyMsg").textContent="Nešlo zkopírovat - vyber text ručně dole.";}setTimeout(()=>document.getElementById("copyMsg").textContent="",4000);};
+
+  const keepText='Uprav můj soubor ~/.claude/settings.json (pokud neexistuje, vytvoř ho jako platný JSON). Nastav v něm klíč "cleanupPeriodDays" na co nejvyšší možnou hodnotu, aby se přepisy chatů Claude Code ve složce ~/.claude/projects už nemazaly (výchozí je 30 dní). Pokud opravdu nelze nastavit neomezeně, nastav hodnotu 1825 (5 let). Zachovej všechna ostatní nastavení - jen slučuj, nic nemaž. Nakonec ověř, že je JSON platný.';
+  const keepMsgEl=document.getElementById("keepMsg");
+  document.getElementById("copyKeepPrompt").onclick=async()=>{try{await navigator.clipboard.writeText(keepText);keepMsgEl.textContent="Zkopírováno! Vlož to do Claude Code 🚀";}catch(e){window.prompt("Zkopíruj si prompt ručně (Ctrl/Cmd+C):",keepText);keepMsgEl.textContent="Zkopíruj prosím prompt ručně z okna výše.";}setTimeout(()=>keepMsgEl.textContent="",4000);};
 
   drawShareCard(s,t,cm,{level:t.idx+1,levels:TIERS.length,achGot,achTotal});
   const cbtn=document.getElementById("copyCard"),cmsg=document.getElementById("cardMsg");
